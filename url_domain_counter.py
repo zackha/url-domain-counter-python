@@ -3,33 +3,33 @@ from urllib.parse import urlparse
 from collections import Counter
 from tkinter import Tk, filedialog
 
-# Tkinter kullanarak dosya seçme penceresi açma
+# Use Tkinter to open file dialog for selecting the input file
 root = Tk()
-root.withdraw()  # Tkinter ana penceresini gizle
+root.withdraw()  # Hide Tkinter main window
 file_path = filedialog.askopenfilename(filetypes=[("Excel files", "*.xlsx *.xls")])
 
 if file_path:
-    # Excel dosyasını oku
+    # Read the selected Excel file
     df = pd.read_excel(file_path)
 
-    # C sütunundaki URL'leri al
-    urls = df.iloc[:, 2]  # C sütunu üçüncü sütun olduğu için iloc[:, 2]
+    # Get the URLs from the third column (C column)
+    urls = df.iloc[:, 2]  # C column is the third column, so iloc[:, 2]
 
-    # Alan adlarını çıkar
+    # Extract domains from the URLs
     domains = [urlparse(url).netloc for url in urls if isinstance(url, str)]
 
-    # Alan adlarının kaç defa kullanıldığını say
+    # Count the occurrences of each domain
     domain_counts = Counter(domains)
 
-    # Sonuçları yeni bir DataFrame'e yaz
+    # Write the results to a new DataFrame
     result_df = pd.DataFrame(list(domain_counts.items()), columns=['Domain', 'Count'])
 
-    # Sonuçları yeni bir Excel dosyasına yaz
+    # Use file dialog to save the output file
     output_file_path = filedialog.asksaveasfilename(defaultextension=".xlsx", filetypes=[("Excel files", "*.xlsx *.xls")])
     if output_file_path:
         result_df.to_excel(output_file_path, index=False)
-        print(f"Sonuçlar {output_file_path} dosyasına kaydedildi.")
+        print(f"Results saved to {output_file_path}.")
     else:
-        print("Çıktı dosyası seçilmedi.")
+        print("Output file not selected.")
 else:
-    print("Dosya seçilmedi.")
+    print("Input file not selected.")
